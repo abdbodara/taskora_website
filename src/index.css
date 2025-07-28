@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background-image: linear-gradient(to bottom, #6C63FF, #9C88FF, #FF6B9D) !important;
+}
+
+.theme-bg-btn {
+    background-image: linear-gradient(to right, #6C63FF, #9C88FF);
+    background-size: 200% 100%;
+    background-position: right bottom;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-bg-btn:hover {
+    background-position: left bottom;
+}
