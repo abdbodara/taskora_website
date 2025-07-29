@@ -14,7 +14,6 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
         technicianIds: []
     });
 
-    // Initialize form with task data when in edit mode
     useEffect(() => {
         if (taskToEdit) {
             setFormData({
@@ -26,7 +25,6 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                 technicianIds: taskToEdit.technicians ? taskToEdit.technicians.map(t => t.id) : []
             });
         } else {
-            // Reset form when opening in add mode
             setFormData({
                 title: '',
                 description: '',
@@ -37,6 +35,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
             });
         }
     }, [taskToEdit, isOpen]);
+
     const [searchTerm, setSearchTerm] = useState('');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -49,7 +48,6 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
         }
     }, [isOpen]);
 
-    // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -122,8 +120,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
         const selectedDate = new Date(formData.dueDate);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        
-        // Set minimum allowed date to tomorrow
+
         const tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
         tomorrow.setHours(0, 0, 0, 0);
@@ -189,21 +186,23 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold">{taskToEdit ? 'Edit Task' : 'Add New Task'}</h2>
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl border border-gray-100 overflow-hidden">
+                <div className="flex justify-between items-center p-6 border-b border-gray-100">
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        {taskToEdit ? 'Edit Task' : 'Add New Task'}
+                    </h2>
                     <button
                         onClick={onClose}
-                        className="text-gray-500 hover:text-gray-700"
+                        className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100 transition-colors"
                     >
-                        ✕
+                        <X size={20} />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div className="col-span-2">
+                <form onSubmit={handleSubmit} className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div className="col-span-2 space-y-1">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Title <span className="text-red-500">*</span>
                             </label>
@@ -212,11 +211,12 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                                 name="title"
                                 value={formData.title}
                                 onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
+                                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                placeholder="Enter task title"
                             />
                         </div>
 
-                        <div className="col-span-2">
+                        <div className="col-span-2 space-y-1">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Description
                             </label>
@@ -225,11 +225,12 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                                 value={formData.description}
                                 onChange={handleChange}
                                 rows="3"
-                                className="w-full p-2 border border-gray-300 rounded-md"
+                                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                placeholder="Enter task description"
                             />
                         </div>
 
-                        <div>
+                        <div className="space-y-1">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Status
                             </label>
@@ -237,7 +238,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                                 name="status"
                                 value={formData.status}
                                 onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
+                                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all appearance-none bg-white bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiAjdjV2NnY4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBvbHlsaW5lIHBvaW50cz0iNiA5IDEyIDE1IDE4IDkiPjwvcG9seWxpbmU+PC9zdmc+')] bg-no-repeat bg-[right_0.75rem_center]"
                             >
                                 <option value="pending">Pending</option>
                                 <option value="in_progress">In Progress</option>
@@ -246,7 +247,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                             </select>
                         </div>
 
-                        <div>
+                        <div className="space-y-1">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Priority
                             </label>
@@ -254,7 +255,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                                 name="priority"
                                 value={formData.priority}
                                 onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
+                                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all appearance-none bg-white bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiAjdjV2NnY4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBvbHlsaW5lIHBvaW50cz0iNiA5IDEyIDE1IDE4IDkiPjwvcG9seWxpbmU+PC9zdmc+')] bg-no-repeat bg-[right_0.75rem_center]"
                             >
                                 <option value="low">Low</option>
                                 <option value="medium">Medium</option>
@@ -262,7 +263,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                             </select>
                         </div>
 
-                        <div>
+                        <div className="space-y-1">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Due Date <span className="text-red-500">*</span>
                             </label>
@@ -271,7 +272,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                                 name="dueDate"
                                 value={formData.dueDate}
                                 onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
+                                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                 min={(() => {
                                     const tomorrow = new Date();
                                     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -280,17 +281,16 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                             />
                         </div>
 
-                        <div className="col-span-2">
+                        <div className="col-span-2 space-y-1">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Assign to Technicians <span className="text-red-500">*</span>
                             </label>
 
-                            {/* Selected Technicians Chips */}
                             <div className="flex flex-wrap gap-2 mb-2">
                                 {getSelectedTechnicians().map(tech => (
                                     <div
                                         key={tech.id}
-                                        className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full"
+                                        className="flex items-center bg-indigo-100 text-indigo-800 text-sm px-3 py-1.5 rounded-full"
                                     >
                                         {tech.name}
                                         <button
@@ -299,7 +299,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                                                 e.stopPropagation();
                                                 handleRemoveTechnician(tech.id);
                                             }}
-                                            className="ml-1.5 text-blue-500 hover:text-blue-700 focus:outline-none"
+                                            className="ml-1.5 text-indigo-500 hover:text-indigo-700 focus:outline-none transition-colors"
                                         >
                                             <X size={14} />
                                         </button>
@@ -307,7 +307,6 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                                 ))}
                             </div>
 
-                            {/* Search and Dropdown */}
                             <div className="relative" ref={dropdownRef}>
                                 <div className="relative">
                                     <input
@@ -316,21 +315,23 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         onFocus={() => setIsDropdownOpen(true)}
-                                        className="w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full px-4 py-2.5 pl-10 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                     />
-                                    <Search className="absolute left-2.5 top-2.5 h-5 w-5 text-gray-400" />
+                                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                                 </div>
 
-                                {/* Dropdown */}
                                 {isDropdownOpen && (
-                                    <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 focus:outline-none max-h-60 overflow-auto">
+                                    <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-lg py-1 text-base ring-1 ring-black ring-opacity-5 focus:outline-none max-h-60 overflow-auto">
                                         {filteredTechnicians.length > 0 ? (
                                             filteredTechnicians.map(tech => (
                                                 <div
                                                     key={tech.id}
                                                     onClick={() => handleAddTechnician(tech.id)}
-                                                    className="cursor-pointer hover:bg-gray-100 px-4 py-2 text-sm text-gray-700 flex items-center"
+                                                    className="cursor-pointer hover:bg-gray-50 px-4 py-2 text-sm text-gray-700 flex items-center transition-colors"
                                                 >
+                                                    <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-medium mr-3">
+                                                        {tech.name.charAt(0)}
+                                                    </div>
                                                     <div>
                                                         <div className="font-medium">{tech.name}</div>
                                                         <div className="text-xs text-gray-500">{tech.email}</div>
@@ -354,24 +355,31 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                         </div>
                     </div>
 
-                    <div className="flex justify-end space-x-3 mt-6">
+                    <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                            className="px-5 py-2.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
                             disabled={loading}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                            className="px-5 py-2.5 theme-bg-btn text-white rounded-lg font-medium hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             disabled={loading}
                         >
-                            {loading
-                                ? `${taskToEdit ? 'Updating...' : 'Creating...'}`
-                                : `${taskToEdit ? 'Update' : 'Create'} Task`
-                            }
+                            {loading ? (
+                                <span className="flex items-center justify-center">
+                                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    {taskToEdit ? 'Updating...' : 'Creating...'}
+                                </span>
+                            ) : (
+                                taskToEdit ? 'Update Task' : 'Create Task'
+                            )}
                         </button>
                     </div>
                 </form>
