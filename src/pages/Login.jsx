@@ -5,23 +5,61 @@ import { login } from "../apiEndPoints/auth";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      toast.error("Please fill in all fields");
+    if (!validateForm()) {
       return;
     }
 
     try {
       setLoading(true);
-      const response = await login({ email, password });
+      const response = await login({ 
+        email: formData.email, 
+        password: formData.password 
+      });
 
       if (response.data.success) {
         const { token, user } = response.data.data;
@@ -70,12 +108,15 @@ const Login = () => {
               <input
                 type="email"
                 id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#6C63FF]/50 focus:border-transparent transition-all duration-200 outline-none"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className={`block w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:ring-2 focus:ring-[#6C63FF]/50 focus:border-transparent transition-all duration-200 outline-none`}
                 placeholder="Enter your email"
-                required
               />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+              )}
             </div>
           </div>
 
@@ -84,19 +125,16 @@ const Login = () => {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <a href="#" className="text-xs text-[#6C63FF] hover:underline">
-                Forgot password?
-              </a>
             </div>
             <div className="relative mt-1">
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#6C63FF]/50 focus:border-transparent transition-all duration-200 pr-12 outline-none"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className={`block w-full px-4 py-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:ring-2 focus:ring-[#6C63FF]/50 focus:border-transparent transition-all duration-200 pr-12 outline-none`}
                 placeholder="••••••••"
-                required
               />
               <button
                 type="button"
@@ -106,6 +144,9 @@ const Login = () => {
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+              )}
             </div>
           </div>
 

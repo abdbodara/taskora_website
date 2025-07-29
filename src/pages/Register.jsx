@@ -5,24 +5,70 @@ import { register } from "../apiEndPoints/auth";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: ''
+  });
+  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters';
+    }
+
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
   const handelRegister = async (e) => {
     e.preventDefault();
 
-    if (!email || !password || !name) {
-      toast.error("Please fill in all fields");
+    if (!validateForm()) {
       return;
     }
 
     try {
       setLoading(true);
-      const response = await register({ email, password, name });
+      const response = await register({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name
+      });
       const { user } = response.data.data;
 
       if (response.data.success) {
@@ -47,7 +93,7 @@ const Register = () => {
         <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-md">Storyline</h2>
         <p className="text-white/90 text-lg">Create Your Account</p>
       </div>
-      
+
       <div className="w-full max-w-md bg-white/95 backdrop-blur-sm p-8 rounded-2xl shadow-xl transform transition-all duration-500 hover:shadow-2xl animate-fade-in-up">
         <div className="space-y-1 mb-8 text-center">
           <h2 className="text-2xl font-bold text-gray-800">Get Started</h2>
@@ -63,11 +109,11 @@ const Register = () => {
               <input
                 type="text"
                 id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#6C63FF]/50 focus:border-transparent transition-all duration-200 outline-none"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className={`block w-full px-4 py-3 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:ring-2 focus:ring-[#6C63FF]/50 focus:border-transparent transition-all duration-200 outline-none`}
                 placeholder="Enter your full name"
-                required
               />
             </div>
           </div>
@@ -80,11 +126,11 @@ const Register = () => {
               <input
                 type="email"
                 id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#6C63FF]/50 focus:border-transparent transition-all duration-200 outline-none"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className={`block w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:ring-2 focus:ring-[#6C63FF]/50 focus:border-transparent transition-all duration-200 outline-none`}
                 placeholder="Enter your email"
-                required
               />
             </div>
           </div>
@@ -95,19 +141,19 @@ const Register = () => {
                 Password
               </label>
               <div className="text-xs text-gray-500">
-                At least 8 characters
+                At least 6 characters
               </div>
             </div>
             <div className="relative mt-1">
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#6C63FF]/50 focus:border-transparent transition-all duration-200 pr-12 outline-none"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className={`block w-full px-4 py-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:ring-2 focus:ring-[#6C63FF]/50 focus:border-transparent transition-all duration-200 pr-12 outline-none`}
                 placeholder="••••••••"
-                minLength="8"
-                required
+                minLength="6"
               />
               <button
                 type="button"
@@ -117,6 +163,9 @@ const Register = () => {
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+              )}
             </div>
           </div>
 
