@@ -321,7 +321,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSuccess, taskToEdit = null }) 
                                 </div>
 
                                 {isDropdownOpen && (
-                                    <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-lg py-1 text-base ring-1 ring-black ring-opacity-5 focus:outline-none max-h-60 overflow-auto">
+                                    <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-lg py-1 text-base ring-1 ring-black ring-opacity-5 focus:outline-none max-h-[105px] overflow-auto">
                                         {filteredTechnicians.length > 0 ? (
                                             filteredTechnicians.map(tech => (
                                                 <div
